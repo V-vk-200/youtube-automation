@@ -25,8 +25,8 @@ export async function setup(assets = true): Promise<Config> {
   if (!apiKey || !accountId) throw new Error('Fill ZERNIO_API_KEY and ZERNIO_YOUTUBE_ACCOUNT_ID in scripting/.env. Copy scripting/.env.example to .env first if needed.');
   if (!['public', 'private', 'unlisted'].includes(visibility)) throw new Error('YOUTUBE_VISIBILITY must be public, private or unlisted in scripting/.env.');
   if (assets) {
-    if (!process.env.OPENAI_API_KEY?.trim() && !process.env.GROQ_API_KEY?.trim()) {
-      throw new Error('Add OPENAI_API_KEY or GROQ_API_KEY to scripting/.env.');
+    if (!process.env.GEMINI_API_KEY?.trim() && !process.env.OPENAI_API_KEY?.trim() && !process.env.GROQ_API_KEY?.trim()) {
+      throw new Error('Add GEMINI_API_KEY, OPENAI_API_KEY or GROQ_API_KEY to scripting/.env.');
     }
     for (const [name, variable] of [['channel-logo', 'CHANNEL_LOGO_PATH'], ['channel-intro.mp4', 'CHANNEL_INTRO_PATH']]) {
       const value = process.env[variable]?.trim();
