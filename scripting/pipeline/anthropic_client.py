@@ -7,14 +7,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-Provider = Literal["openai", "groq"]
-DEFAULT_MODELS: dict[Provider, str] = {"openai": "gpt-4.1-mini", "groq": "openai/gpt-oss-120b"}
-
+Provider = Literal["gemini", "openai", "groq"]
+DEFAULT_MODELS: dict[Provider, str] = {"gemini": "gemini-2.5-flash", "openai": "gpt-4.1-mini", "groq": "openai/gpt-oss-120b"}
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
 def select_provider() -> Provider:
     """Prefer OpenAI when both supported keys are intentionally configured."""
-    if os.getenv("OPENAI_API_KEY"):
-        return "openai"
+    if os.getenv("GEMINI_API_KEY"):
+        return "gemini"
     if os.getenv("GROQ_API_KEY"):
         return "groq"
     raise RuntimeError("No writing-model key found. Add OPENAI_API_KEY or GROQ_API_KEY to scripting/.env (or set it in your environment).")
@@ -25,9 +25,9 @@ class ScriptClient:
     def __init__(self, provider: Provider | None = None, model: str | None = None):
         self.provider = provider or select_provider()
         self.model = model or os.getenv(f"{self.provider.upper()}_MODEL") or DEFAULT_MODELS[self.provider]
-        if self.provider == "openai":
+        if self.provider == "gemini":
             from openai import OpenAI
-            self.client = OpenAI()
+            self.client = OpenAI(api_key=os.getenv("GEMINI_API_KEY"), base_url=GEMINI_BASE_URL)
         else:
             from groq import Groq
             self.client = Groq()
